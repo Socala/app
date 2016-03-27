@@ -1,0 +1,22 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="socala.app.CalendarActivity">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_calendar_fragment"
+            android:checked="true"
+            android:icon="@drawable/ic_today_black_24dp"
+            android:title="@string/calendar" />
+        <item
+            android:id="@+id/nav_friend_list_fragment"
+            android:icon="@drawable/ic_contacts_black_24dp"
+            android:checked="true"
+            android:title="@string/friend_list" />
+        <item
+            android:id="@+id/nav_common_time_fragment"
+            android:icon="@drawable/ic_date_range_black_24dp"
+            android:checked="true"
+            android:title="@string/common_time" />
+    </group>
+</menu>
