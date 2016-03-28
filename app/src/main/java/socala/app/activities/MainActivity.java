@@ -21,46 +21,6 @@ public class MainActivity extends AppCompatActivity {
     private ActionBarDrawerToggle drawerToggle;
     private Toolbar toolbar;
 
-    private void setupDrawerContent(NavigationView navView) {
-       navView.setNavigationItemSelectedListener(
-               new NavigationView.OnNavigationItemSelectedListener() {
-                   @Override
-                   public boolean onNavigationItemSelected(MenuItem item) {
-                       selectDrawerItem(item);
-                       return true;
-                   }
-               }
-       );
-    }
-
-    private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerToggle = setupDrawerToggle();
-
-        drawer.addDrawerListener(drawerToggle);
-
-        NavigationView navView = (NavigationView) findViewById(R.id.navView);
-
-        setupDrawerContent(navView);
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
-
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
@@ -69,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem item) {
         Fragment fragment = null;
         Class fragmentClass;
+
         switch (item.getItemId()) {
             case R.id.nav_calendar_fragment:
                 fragmentClass = CalendarFragment.class;
@@ -106,6 +67,48 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerToggle = setupDrawerToggle();
+        drawer.addDrawerListener(drawerToggle);
+
+        NavigationView navView = (NavigationView) findViewById(R.id.navView);
+
+        setupDrawerContent(navView);
+
+        selectDrawerItem(navView.getMenu().findItem(R.id.nav_calendar_fragment));
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    private void setupDrawerContent(NavigationView navView) {
+        navView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem item) {
+                        selectDrawerItem(item);
+                        return true;
+                    }
+                }
+        );
+    }
+
+    private ActionBarDrawerToggle setupDrawerToggle() {
+        return new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
 }

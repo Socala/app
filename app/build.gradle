@@ -26,4 +26,10 @@ dependencies {
     compile 'com.android.support:design:23.2.1'
     compile 'com.github.alamkanak:android-week-view:1.2.6'
     compile 'com.android.support:support-v4:23.2.1'
+    compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.squareup.retrofit2:retrofit:2.0.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.0.0'
 }
+
+apply plugin: 'com.google.gms.google-services'

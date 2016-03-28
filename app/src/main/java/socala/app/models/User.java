@@ -1,49 +1,52 @@
 package socala.app.models;
 
 public class User {
-    private String mUsername;
-    private String mOAuthToken;
-    private String mEmail;
-    private Calendar mCalendar;
-    private User[] mFriends;
+    private String username;
+    private String oauthToken;
+    private String email;
+    private Calendar calendar;
+    private User[] friends;
 
-    public String getUsername() {
-        return mUsername;
+    public User() {
     }
 
-    public void setUsername(String mUsername) {
-        this.mUsername = mUsername;
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getOAuthToken() {
-        return mOAuthToken;
+        return oauthToken;
     }
 
-    public void setOAuthToken(String mOAuthToken) {
-        this.mOAuthToken = mOAuthToken;
+    public void setOAuthToken(String oauthToken) {
+        this.oauthToken = oauthToken;
     }
 
     public String getEmail() {
-        return mEmail;
+        return email;
     }
 
-    public void setEmail(String mEmail) {
-        this.mEmail = mEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Calendar getCalendar() {
-        return mCalendar;
+        return calendar;
     }
 
-    public void setCalendar(Calendar mCalendar) {
-        this.mCalendar = mCalendar;
+    public void setCalendar(Calendar calendar) {
+        this.calendar = calendar;
     }
 
     public User[] getFriends() {
-        return mFriends;
+        return friends;
     }
 
-    public void setFriends(User[] mFriends) {
-        this.mFriends = mFriends;
+    public void setFriends(User[] friends) {
+        this.friends = friends;
     }
 }

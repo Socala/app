@@ -1,22 +1,22 @@
 package socala.app.models;
 
 public class Calendar {
-    private String mId;
-    private Event[] mEvents;
+    private String id;
+    private Event[] events;
 
     public String getId() {
-        return mId;
+        return id;
     }
 
-    public void setId(String mId) {
-        this.mId = mId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Event[] getEvents() {
-        return mEvents;
+        return events;
     }
 
-    public void setEvents(Event[] mEvents) {
-        this.mEvents = mEvents;
+    public void setEvents(Event[] events) {
+        this.events = events;
     }
 }

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import socala.app.R;
 
 public class CommonTimeFinderFragment extends Fragment {
+
     public CommonTimeFinderFragment() {
         // Required empty public constructor
     }

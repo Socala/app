@@ -1,33 +1,29 @@
 package socala.app.contexts;
 
 import socala.app.models.User;
-import socala.app.services.DataService;
 
 public class AppContext {
 
-    private static AppContext sAppContext = null;
+    private static AppContext appContext = null;
+    private User user;
 
-    private DataService mDataService;
-    private User mUser;
-
-    private AppContext(User user) {
-        this.mDataService = new DataService(user.getOAuthToken());
-        this.mUser = null;
+    private AppContext() {
+        this.user = null;
     }
 
-    public static AppContext getInstance(User user) {
-        if (sAppContext == null) {
-            sAppContext = new AppContext(user);
+    public static AppContext getInstance() {
+        if (appContext == null) {
+            appContext = new AppContext();
         }
 
-        return sAppContext;
+        return appContext;
     }
 
     public User getUser() {
-        return mUser;
+        return user;
     }
 
-    public DataService getDataService() {
-        return mDataService;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

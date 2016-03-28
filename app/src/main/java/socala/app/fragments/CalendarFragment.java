@@ -12,9 +12,7 @@ import socala.app.R;
 public class CalendarFragment extends Fragment {
 
     public CalendarFragment() {
-        // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -22,5 +20,4 @@ public class CalendarFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_calendar, container, false);
     }
-
 }

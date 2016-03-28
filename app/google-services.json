@@ -1,0 +1,56 @@
+{
+  "project_info": {
+    "project_id": "socala-8e05",
+    "project_number": "254021896940",
+    "name": "Socala"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254021896940:android:1a76f73935ea2d9b",
+        "client_id": "android:socala.app",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "socala.app",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "254021896940-eq2dcq58rqmadjvtlgiiqkgphn2k7hh1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "socala.app",
+            "certificate_hash": "D9921C2A9DE40FC8A4FBE421C8A715F4E7AC8B2B"
+          }
+        },
+        {
+          "client_id": "254021896940-jc5hg452sa8j7uacr5q82hu2b7lg8fup.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 2
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}
