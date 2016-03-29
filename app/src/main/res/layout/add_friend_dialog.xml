@@ -9,5 +9,5 @@
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
         android:ems="10"
-        android:id="@+id/add_friend_email_edit_text"/>
+        android:id="@+id/email_edit_text"/>
 </LinearLayout>

@@ -1,7 +1,6 @@
 package socala.app.fragments;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +12,10 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -25,22 +28,20 @@ import socala.app.models.User;
 import socala.app.services.ISocalaService;
 import socala.app.services.SocalaClient;
 
-public class FriendListFragment extends Fragment implements View.OnClickListener,
-        AdapterView.OnItemClickListener,
+public class FriendListFragment extends Fragment implements
         FriendInfoDialog.FriendInfoDialogListener,
         FriendAddDialog.FriendAddDialogListener {
 
     private final AppContext appContext = AppContext.getInstance();
     private final ISocalaService service = SocalaClient.getClient();
     private UserAdapter adapter;
-    private ListView listView;
 
-    public FriendListFragment() {
-    }
+    @Bind(R.id.list_view) ListView listView;
+
+    public FriendListFragment() { }
 
     public static FriendListFragment newInstance() {
-        FriendListFragment fragment = new FriendListFragment();
-        return fragment;
+        return new FriendListFragment();
     }
 
     @Override
@@ -52,9 +53,9 @@ public class FriendListFragment extends Fragment implements View.OnClickListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.fragment_friend_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_friend_list, container, false);
 
-        listView = (ListView) fragmentView.findViewById(R.id.friend_list_view);
+        ButterKnife.bind(this, view);
 
         List<User> friends = appContext.getUser().getFriends();
 
@@ -62,24 +63,16 @@ public class FriendListFragment extends Fragment implements View.OnClickListener
 
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener(this);
-
-        FloatingActionButton fab = (FloatingActionButton) fragmentView.findViewById(R.id.friend_list_fab);
-
-        fab.setOnClickListener(this);
-
-        return fragmentView;
+        return view;
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.friend_list_fab) {
-            showFriendAddDialog();
-        }
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        showFriendAddDialog();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @OnItemClick(R.id.list_view)
+    public void onFriendClick(AdapterView<?> parent, View view, int position, long id) {
         User user = (User) parent.getItemAtPosition(position);
         showFriendDetailsDialog(user);
     }

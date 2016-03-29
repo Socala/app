@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import butterknife.ButterKnife;
 import socala.app.R;
 
 public class FriendAddDialog extends DialogFragment {
@@ -34,7 +35,7 @@ public class FriendAddDialog extends DialogFragment {
                 .setPositiveButton("Add", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditText emailEditText = (EditText) v.findViewById(R.id.add_friend_email_edit_text);
+                        EditText emailEditText = ButterKnife.findById(v, R.id.email_edit_text);
 
                         callback.onAddFriendClicked(emailEditText.getText().toString());
                     }

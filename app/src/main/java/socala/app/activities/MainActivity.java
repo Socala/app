@@ -11,15 +11,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import socala.app.R;
 import socala.app.fragments.CalendarFragment;
 import socala.app.fragments.CommonTimeFinderFragment;
 import socala.app.fragments.FriendListFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private DrawerLayout drawer;
     private ActionBarDrawerToggle drawerToggle;
-    private Toolbar toolbar;
+
+    @Bind(R.id.drawer_layout) DrawerLayout drawer;
+    @Bind(R.id.toolbar) Toolbar toolbar;
+    @Bind(R.id.nav_view) NavigationView navView;
 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -75,14 +79,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerToggle = setupDrawerToggle();
         drawer.addDrawerListener(drawerToggle);
-
-        NavigationView navView = (NavigationView) findViewById(R.id.navView);
 
         setupDrawerContent(navView);
 
