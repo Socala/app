@@ -93,9 +93,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
             try {
                 Response<User> response = service.getUser(acct.getIdToken()).execute();
-
                 appContext.setUser(response.body());
-
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 

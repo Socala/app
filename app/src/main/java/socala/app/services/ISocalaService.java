@@ -59,5 +59,5 @@ public interface ISocalaService {
     Call<User> addFriend(@Header("Authorizaiton") String token, @Query("email") String email);
 
     @GET("user/friend/remove")
-    Call<User> removeFriend(@Header("Authorization") String token, @Query("email") String friendId);
+    Call<Boolean> removeFriend(@Header("Authorization") String token, @Query("email") String friendId);
 }

@@ -4,10 +4,20 @@
     android:layout_height="match_parent"
     tools:context="socala.app.fragments.FriendListFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/friend_list_view"
+        android:layout_gravity="left|top"
+        />
 
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:id="@+id/friend_list_fab"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="right|bottom"
+        />
 </FrameLayout>
