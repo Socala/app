@@ -10,7 +10,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import socala.app.models.Calendar;
+import socala.app.models.SocalaCalendar;
 import socala.app.models.CommonTimeOptions;
 import socala.app.models.Event;
 import socala.app.models.User;
@@ -41,10 +41,10 @@ public interface ISocalaService {
     Call<Event> updateEvent(@Header("Authorization") String token, @Path("id") String eventId, @Body Event event);
 
     @GET("event/{id}")
-    Call<Calendar> getCalendar(@Header("Authorization") String token, @Path("id") String userId);
+    Call<SocalaCalendar> getCalendar(@Header("Authorization") String token, @Path("id") String userId);
 
     @POST("events/")
-    Call<Calendar[]> getCalendars(@Header("Authorization") String token, @Body String[] userIds);
+    Call<SocalaCalendar[]> getCalendars(@Header("Authorization") String token, @Body String[] userIds);
 
     @GET("user/{id}/rsvp/{eventId}")
     Call<Boolean> rsvp(@Header("Authorization") String token, @Path("eventId") String eventId, @Path("id") String eventUserId);
@@ -53,7 +53,7 @@ public interface ISocalaService {
     Call<Boolean> unrsvp(@Header("Authorization") String token, @Path("eventId") String eventId, @Path("id") String eventUserId);
 
     @GET("events/commonTimes")
-    Call<Calendar> getCommonTimes(@Header("Authorization") String token, @Part("userId") String userId, @Part("friendIds") String[] friendIds, @Part("options") CommonTimeOptions options);
+    Call<SocalaCalendar> getCommonTimes(@Header("Authorization") String token, @Part("userId") String userId, @Part("friendIds") String[] friendIds, @Part("options") CommonTimeOptions options);
 
     @GET("user/friend/add")
     Call<User> addFriend(@Header("Authorizaiton") String token, @Query("email") String email);

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -87,28 +86,29 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-        Log.d("SignInActivity", "HandleSignInResult: " + result.isSuccess());
-        if (result.isSuccess()) {
-            GoogleSignInAccount acct = result.getSignInAccount();
+        // TODO: Uncomment when not testing
 
-            try {
-                Response<User> response = service.getUser(acct.getIdToken()).execute();
-                appContext.setUser(response.body());
-
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-
-                startActivity(intent);
-                finish();
-
-            } catch (IOException e) {
-                // TODO: Handle failure
-                e.printStackTrace();
-            }
-
-        } else {
+        if (!result.isSuccess()) {
             Context context = getApplicationContext();
             Toast toast = Toast.makeText(context, "Authenticated Failed", Toast.LENGTH_SHORT);
             toast.show();
+            return;
+        }
+
+        GoogleSignInAccount acct = result.getSignInAccount();
+
+        try {
+            Response<User> response = service.getUser(acct.getIdToken()).execute();
+            appContext.setUser(response.body());
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+            startActivity(intent);
+            finish();
+
+        } catch (IOException e) {
+            // TODO: Handle failure
+            e.printStackTrace();
         }
     }
 }

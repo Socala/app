@@ -1,96 +1,63 @@
 package socala.app.models;
 
-import java.util.Date;
+import android.graphics.Color;
 
+import com.alamkanak.weekview.WeekViewEvent;
+
+import org.parceler.Parcel;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+@Parcel
 public class Event {
-    private String id;
-    private PrivacyLevel privacyLevel;
-    private boolean rsvpable;
-    private String[] attendees;
-    private Date start;
-    private Date end;
-    private String[] recurrence;
-    private String recurringEventId;
-    private String location;
-    private String color;
+    public String id;
+    public PrivacyLevel privacyLevel;
+    public boolean rsvpable;
+    public String title;
+    public List<String> attendees;
+    public Calendar start;
+    public Calendar end;
+    public ArrayList recurrence;
+    public String recurringEventId;
+    public String location;
+    public String color;
 
-    public String getColor() {
-        return color;
+    public Event() {
+        this.recurrence = new ArrayList<>();
+        this.attendees = new ArrayList<>();
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public WeekViewEvent toWeekViewEvent() {
+
+
+        SocalaWeekViewEvent event = new SocalaWeekViewEvent();
+        event.event = this;
+
+        event.setName(this.title);
+        event.setStartTime(start);
+        event.setEndTime(end);
+        event.setColor(Color.parseColor(this.color));
+
+        return event;
     }
 
-    public String[] getAttendees() {
-        return attendees;
-    }
+    public static Event getInstance() {
 
-    public void setAttendees(String[] attendees) {
-        this.attendees = attendees;
-    }
+        Event event = new Event();
 
-    public Date getStart() {
-        return start;
-    }
+        Calendar calendar = Calendar.getInstance();
 
-    public void setStart(Date start) {
-        this.start = start;
-    }
+        event.rsvpable = false;
+        event.privacyLevel = PrivacyLevel.FRIEND;
+        event.color = "#111111";
+        event.start = (Calendar) calendar.clone();
+        calendar.add(Calendar.HOUR, 1);
+        event.end = (Calendar) calendar.clone();
+        event.id = "";
+        event.title = "New Event";
 
-    public Date getEnd() {
-        return end;
-    }
-
-    public void setEnd(Date end) {
-        this.end = end;
-    }
-
-    public String[] getRecurrence() {
-        return recurrence;
-    }
-
-    public void setRecurrence(String[] recurrence) {
-        this.recurrence = recurrence;
-    }
-
-    public String getRecurringEventId() {
-        return recurringEventId;
-    }
-
-    public void setRecurringEventId(String recurringEventId) {
-        this.recurringEventId = recurringEventId;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public PrivacyLevel getPrivacyLevel() {
-        return privacyLevel;
-    }
-
-    public void setPrivacyLevel(PrivacyLevel privacyLevel) {
-        this.privacyLevel = privacyLevel;
-    }
-
-    public boolean isRsvpable() {
-        return rsvpable;
-    }
-
-    public void setRsvpable(boolean rsvpable) {
-        this.rsvpable = rsvpable;
+        return event;
     }
 }

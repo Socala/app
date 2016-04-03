@@ -40,7 +40,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         }
 
         User user = this.getItem(position);
-        holder.userText.setText(user.getDisplayName());
+        holder.userText.setText(user.displayName);
 
         return convertView;
     }

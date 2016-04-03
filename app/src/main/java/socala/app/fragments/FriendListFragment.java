@@ -57,7 +57,7 @@ public class FriendListFragment extends Fragment implements
 
         ButterKnife.bind(this, view);
 
-        List<User> friends = appContext.getUser().getFriends();
+        List<User> friends = appContext.getUser().friends;
 
         adapter = new UserAdapter(getContext(), R.layout.user_item, friends);
 
@@ -99,19 +99,19 @@ public class FriendListFragment extends Fragment implements
     }
 
     private void showFriendDetailsDialog(User user) {
-        DialogFragment dialog = FriendInfoDialog.newInstance(user.getDisplayName(), user.getEmail(), user.getId());
+        DialogFragment dialog = FriendInfoDialog.newInstance(user.displayName, user.email, user.id);
         dialog.setTargetFragment(this, 0);
         dialog.show(getFragmentManager(), "FriendInfoDialog");
     }
 
     private void addFriend(final String email) {
 
-        service.addFriend(appContext.getUser().getOAuthToken(), email).enqueue(new Callback<User>() {
+        service.addFriend(appContext.getUser().oauthToken, email).enqueue(new Callback<User>() {
 
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 
-                appContext.getUser().getFriends().add(response.body());
+                appContext.getUser().friends.add(response.body());
                 adapter.notifyDataSetChanged();
             }
 
@@ -125,7 +125,7 @@ public class FriendListFragment extends Fragment implements
 
     private void removeFriend(final String id) {
 
-        service.removeFriend(appContext.getUser().getOAuthToken(), id).enqueue(new Callback<Boolean>() {
+        service.removeFriend(appContext.getUser().oauthToken, id).enqueue(new Callback<Boolean>() {
 
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
@@ -138,7 +138,7 @@ public class FriendListFragment extends Fragment implements
 
                 User friend = appContext.getUser().getFriend(id);
 
-                appContext.getUser().getFriends().remove(friend);
+                appContext.getUser().friends.remove(friend);
                 adapter.notifyDataSetChanged();
 
             }
@@ -158,7 +158,7 @@ public class FriendListFragment extends Fragment implements
     private void showFailedToRemoveToast(String id) {
         User user = appContext.getUser().getFriend(id);
 
-        Toast toast = Toast.makeText(getContext(), "Failed to remove " + user.getDisplayName(), Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(getContext(), "Failed to remove " + user.displayName, Toast.LENGTH_SHORT);
         toast.show();
     }
 }

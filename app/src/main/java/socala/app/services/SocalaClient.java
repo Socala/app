@@ -23,7 +23,6 @@ public class SocalaClient {
                     .addInterceptor(new MockInterceptor())
                     .build();
 
-
             final Retrofit retrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(SocalaClient.ENDPOINT)
