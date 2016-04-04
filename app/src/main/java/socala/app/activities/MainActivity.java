@@ -11,6 +11,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import socala.app.R;
@@ -25,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.nav_view) NavigationView navView;
 
     private ActionBarDrawerToggle drawerToggle;
+    private Map<String, Fragment> fragments;
+    private Fragment currFragment;
 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -32,37 +38,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void selectDrawerItem(MenuItem item) {
-        Fragment fragment = null;
-        Class fragmentClass;
+        Fragment fragment;
 
         switch (item.getItemId()) {
             case R.id.nav_calendar_fragment:
-                fragmentClass = CalendarFragment.class;
+                fragment = fragments.get("calendar");
                 break;
             case R.id.nav_common_time_fragment:
-                fragmentClass = CommonTimeFinderFragment.class;
+                fragment = fragments.get("commonTime");
                 break;
             case R.id.nav_friend_list_fragment:
-                fragmentClass = FriendListFragment.class;
+                fragment = fragments.get("friendList");
                 break;
             default:
-                fragmentClass = CalendarFragment.class;
-        }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
+                fragment = fragments.get("calendar");
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.frameContent, fragment).commit();
+
+
+        if (currFragment != null) {
+            fragmentManager.beginTransaction().hide(currFragment).commit();
+        }
+
+
+        fragmentManager.beginTransaction().show(fragment).commit();
+        currFragment = fragment;
 
         item.setChecked(true);
 
         setTitle(item.getTitle());
 
         drawer.closeDrawers();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        outState.putStringArrayList("tags", new ArrayList<>(fragments.keySet()));
+
+
+        for (Map.Entry<String, Fragment> entry : fragments.entrySet()) {
+            fragmentManager.putFragment(outState, entry.getKey(), entry.getValue());
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -87,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle = setupDrawerToggle();
         drawer.addDrawerListener(drawerToggle);
 
+        initializeFragments(savedInstanceState);
+
         setupDrawerContent(navView);
 
         selectDrawerItem(navView.getMenu().findItem(R.id.nav_calendar_fragment));
@@ -108,6 +134,34 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+
+    private void initializeFragments(Bundle savedInstanceState) {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Extract fragments from bundle
+        if (savedInstanceState != null) {
+            ArrayList<String> tags = savedInstanceState.getStringArrayList("tags");
+
+            for (String tag : tags) {
+                fragments.put(tag, fragmentManager.getFragment(savedInstanceState, tag));
+            }
+        } else {
+
+            fragments = new HashMap<>();
+
+            fragments.put("commonTime", new CommonTimeFinderFragment());
+            fragments.put("friendList", new FriendListFragment());
+            fragments.put("calendar", new CalendarFragment());
+        }
+
+        for (Map.Entry<String, Fragment> entry :fragments.entrySet()) {
+            fragmentManager.beginTransaction().add(R.id.frameContent, entry.getValue(), entry.getKey()).hide(entry.getValue()).commit();
+        }
+
+        fragmentManager.beginTransaction().show(fragments.get("calendar")).commit();
+        currFragment = fragments.get("calendar");
     }
 
     private ActionBarDrawerToggle setupDrawerToggle() {
