@@ -4,9 +4,14 @@ package socala.app.fragments;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -26,17 +31,19 @@ import butterknife.OnClick;
 import socala.app.R;
 import socala.app.activities.EventDetailsActivity;
 import socala.app.contexts.AppContext;
+import socala.app.dialogs.CalendarOptionsDialog;
 import socala.app.models.Event;
 import socala.app.models.SocalaWeekViewEvent;
 import socala.app.models.User;
 
-public class CalendarFragment extends Fragment implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener {
+public class CalendarFragment extends Fragment implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, CalendarOptionsDialog.CalendarsChangedListener {
 
     protected static final int EVENT_DETAILS_INTENT = 1;
 
     @Bind(R.id.weekView) WeekView weekView;
 
     protected final AppContext appContext = AppContext.getInstance();
+    private List<String> selectedIds;
 
     public CalendarFragment() { }
 
@@ -46,8 +53,42 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        MenuInflater menuInflater = getActivity().getMenuInflater();
+        menuInflater.inflate(R.menu.calendar_options, menu);
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.calendar_options) {
+            createCalendarOptionsDialog();
+            return true;
+        } else if (item.getItemId() == R.id.to_today) {
+            weekView.goToToday();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            selectedIds = Parcels.unwrap(savedInstanceState.getParcelable("selectedIds"));
+        } else {
+            selectedIds = new ArrayList<>();
+            selectedIds.add(appContext.getUser().id);
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setRetainInstance(true);
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
 
@@ -56,6 +97,8 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         weekView.setOnEventClickListener(this);
         weekView.setMonthChangeListener(this);
         weekView.setEventLongPressListener(this);
+
+        setHasOptionsMenu(true);
 
         return view;
     }
@@ -90,6 +133,18 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         weekView.notifyDatasetChanged();
     }
 
+    @Override
+    public void onCalendarsChanged(List<String> ids) {
+        selectedIds = ids;
+        weekView.notifyDatasetChanged();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("selectedIds", Parcels.wrap(selectedIds));
+    }
+
     private List<? extends WeekViewEvent> getEventsForMonth(int newYear, int newMonth) {
         User u = appContext.getUser();
 
@@ -97,7 +152,7 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
            return new ArrayList<>();
         }
 
-        List<Event> events = u.calendar.events;
+        List<Event> events = getSelectedCalendarEvents();
 
         java.util.Calendar calendar = Calendar.getInstance();
         calendar.set(newYear, newMonth, 1);
@@ -120,10 +175,38 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         return filteredEvents;
     }
 
+    private List<Event> getSelectedCalendarEvents() {
+        List<User> users = calendarOptions();
+
+        List<Event> events = new ArrayList<>();
+
+        for (User user : users) {
+            if (selectedIds.contains(user.id)) {
+                events.addAll(user.calendar.events);
+            }
+        }
+
+        return events;
+    }
+
     private void startEventDetailsActivity(Event event) {
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
         intent.putExtra("event", Parcels.wrap(event));
 
         startActivityForResult(intent, CalendarFragment.EVENT_DETAILS_INTENT);
+    }
+
+    private List<User> calendarOptions() {
+        List<User> users = new ArrayList<>();
+        users.addAll(appContext.getUser().friends);
+        users.add(appContext.getUser());
+
+        return users;
+    }
+
+    private void createCalendarOptionsDialog() {
+        DialogFragment dialog = CalendarOptionsDialog.newInstance(calendarOptions(), selectedIds);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "CalendarOptionsDialog");
     }
 }

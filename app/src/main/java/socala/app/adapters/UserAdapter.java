@@ -14,29 +14,32 @@ import socala.app.models.User;
 
 public class UserAdapter extends ArrayAdapter<User> {
 
+    private int resource;
+
     public UserAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
     public UserAdapter(Context context, int resource, List<User> items) {
         super(context, resource, items);
+        this.resource = resource;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        FriendHolder holder;
+        UserHolder holder;
 
         if (convertView == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            convertView = vi.inflate(R.layout.user_item, parent, false);
+            convertView = vi.inflate(resource, parent, false);
 
-            holder = new FriendHolder();
+            holder = new UserHolder();
             holder.userText = (TextView) convertView.findViewById(R.id.user_display_name);
             convertView.setTag(holder);
         } else {
-            holder = (FriendHolder) convertView.getTag();
+            holder = (UserHolder) convertView.getTag();
         }
 
         User user = this.getItem(position);
@@ -45,7 +48,7 @@ public class UserAdapter extends ArrayAdapter<User> {
         return convertView;
     }
 
-    static class FriendHolder {
+    static class UserHolder {
         TextView userText;
     }
 }

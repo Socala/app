@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -42,6 +43,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     @Bind(R.id.endDate) TextView endDateTextView;
     @Bind(R.id.startTime) TextView startTimeTextView;
     @Bind(R.id.endTime) TextView endTimeTextView;
+    @Bind(R.id.saveButton) Button saveButton;
 
     private final AppContext appContext = AppContext.getInstance();
     private final ISocalaService service = SocalaClient.getClient();
@@ -173,11 +175,14 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void setEditability(boolean value) {
         editable = value;
         setEditability(summaryEditText, value);
+        setEditability(saveButton, value);
         setEditability(rsvpableCheckBox, value);
         setEditability(startDateTextView, value);
         setEditability(endDateTextView, value);
         setEditability(startTimeTextView, value);
         setEditability(endTimeTextView, value);
+
+        saveButton.setEnabled(value);
     }
 
     private void setEditability(View v, boolean value) {
@@ -186,7 +191,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private void save() {
-        if(!validateFields()) {
+        if(!validateFields() || !editable) {
             return;
         }
 

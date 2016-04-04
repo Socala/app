@@ -19,11 +19,12 @@ import socala.app.fragments.CommonTimeFinderFragment;
 import socala.app.fragments.FriendListFragment;
 
 public class MainActivity extends AppCompatActivity {
-    private ActionBarDrawerToggle drawerToggle;
 
     @Bind(R.id.drawer_layout) DrawerLayout drawer;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.nav_view) NavigationView navView;
+
+    private ActionBarDrawerToggle drawerToggle;
 
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);

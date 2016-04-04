@@ -84,4 +84,6 @@
     </string>
     <string name="title_activity_main">Main</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="options">Options</string>
+    <string name="to_today">To Today</string>
 </resources>

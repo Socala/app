@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="socala.app.CalendarActivity">
+    <group>
+        <item
+            android:id="@+id/calendar_options"
+            android:title="@string/options" />
+        <item
+            android:id="@+id/to_today"
+            android:title="@string/to_today" />
+    </group>
+</menu>

@@ -37,9 +37,6 @@
                 android:value="socala.app.activities.MainActivity"/>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"/>
-        <activity
             android:name=".activities.EventDetailsActivity"
             android:label="@string/title_activity_event_details"
             android:parentActivityName=".activities.MainActivity"
