@@ -3,6 +3,7 @@ package socala.app.activities;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.parceler.Parcels;
+
+import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -72,16 +75,38 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_details);
 
         ButterKnife.bind(this);
 
+        setResult(RESULT_CANCELED);
+
         event = Parcels.unwrap(getIntent().getParcelableExtra("event"));
 
         if (event == null) {
             event = Event.getInstance();
+
+            Calendar startTime = (Calendar) getIntent().getSerializableExtra("startTime");
+            Calendar endTime = (Calendar) getIntent().getSerializableExtra("endTime");
+
+            if (startTime != null) {
+                event.start = startTime;
+                event.end = endTime;
+            }
+
             setEditability(true);
         } else {
             setEditability(appContext.getUser().calendar.hasEvent(event.id));
@@ -142,6 +167,7 @@ public class EventDetailsActivity extends AppCompatActivity {
                 Event e = response.body();
 
                 appContext.getUser().calendar.upsertEvent(e);
+                setResult(RESULT_OK);
                 finish();
             }
 

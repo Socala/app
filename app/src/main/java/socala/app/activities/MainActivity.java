@@ -22,7 +22,7 @@ import socala.app.fragments.CalendarFragment;
 import socala.app.fragments.CommonTimeFinderFragment;
 import socala.app.fragments.FriendListFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CommonTimeFinderFragment.OnCalendarChanged {
 
     @Bind(R.id.drawer_layout) DrawerLayout drawer;
     @Bind(R.id.toolbar) Toolbar toolbar;
@@ -70,6 +70,12 @@ public class MainActivity extends AppCompatActivity {
         setTitle(item.getTitle());
 
         drawer.closeDrawers();
+    }
+
+    @Override
+    public void onCalendarChanged() {
+        CalendarFragment fragment = (CalendarFragment) getSupportFragmentManager().findFragmentByTag("calendar");
+        fragment.refresh();
     }
 
     @Override

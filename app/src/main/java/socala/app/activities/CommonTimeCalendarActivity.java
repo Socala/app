@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.alamkanak.weekview.MonthLoader;
 import com.alamkanak.weekview.WeekView;
@@ -28,6 +29,8 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.weekView) WeekView weekView;
 
+    public final int EVENT_DETAILS_INTENT = 1;
+
     private List<User> users;
     private final AppContext appContext = AppContext.getInstance();
     private Calendar start;
@@ -38,7 +41,35 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
 
     @Override
     public void onEmptyViewClicked(Calendar time) {
-        //Start a new event
+        Intent intent = new Intent(this, EventDetailsActivity.class);
+        intent.putExtra("startTime", time);
+        Calendar endTime = (Calendar) time.clone();
+        endTime.setTimeInMillis(endTime.getTimeInMillis() + duration);
+        intent.putExtra("endTime", endTime);
+
+        startActivityForResult(intent, EVENT_DETAILS_INTENT);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == EVENT_DETAILS_INTENT) {
+            if (resultCode == RESULT_OK) {
+                setResult(RESULT_OK);
+                finish();
+            }
+        }
     }
 
     @Override
@@ -52,6 +83,8 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
         setContentView(R.layout.activity_common_time_calendar);
 
         ButterKnife.bind(this);
+
+        setResult(RESULT_CANCELED);
 
         extractExtras();
 

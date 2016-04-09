@@ -36,7 +36,7 @@ import socala.app.models.Event;
 import socala.app.models.SocalaWeekViewEvent;
 import socala.app.models.User;
 
-public class CalendarFragment extends Fragment implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, CalendarOptionsDialog.CalendarsChangedListener {
+public class CalendarFragment extends Fragment implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, CalendarOptionsDialog.CalendarsChangedListener, WeekView.EmptyViewClickListener {
 
     protected static final int EVENT_DETAILS_INTENT = 1;
 
@@ -49,7 +49,7 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
 
     @OnClick(R.id.fab)
     public void onFabClick(FloatingActionButton fab) {
-        startEventDetailsActivity(null);
+        startEventDetailsActivity((Event) null);
     }
 
     @Override
@@ -96,6 +96,7 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
 
         weekView.setOnEventClickListener(this);
         weekView.setMonthChangeListener(this);
+        weekView.setEmptyViewClickListener(this);
 
         setHasOptionsMenu(true);
 
@@ -137,6 +138,11 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable("selectedIds", Parcels.wrap(selectedIds));
+    }
+
+    @Override
+    public void onEmptyViewClicked(Calendar time) {
+        startEventDetailsActivity(time);
     }
 
     private List<? extends WeekViewEvent> getEventsForMonth(int newYear, int newMonth) {
@@ -183,6 +189,17 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         return events;
     }
 
+    private void startEventDetailsActivity(Calendar startTime) {
+        Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
+        intent.putExtra("startTime", startTime);
+        Calendar endTime = (Calendar) startTime.clone();
+
+        endTime.add(Calendar.HOUR_OF_DAY, 1);
+        intent.putExtra("endTime", endTime);
+
+        startActivityForResult(intent, CalendarFragment.EVENT_DETAILS_INTENT);
+    }
+
     private void startEventDetailsActivity(Event event) {
         Intent intent = new Intent(getActivity(), EventDetailsActivity.class);
         intent.putExtra("event", Parcels.wrap(event));
@@ -204,4 +221,5 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         dialog.setTargetFragment(this, 0);
         dialog.show(getFragmentManager(), "CalendarOptionsDialog");
     }
+
 }

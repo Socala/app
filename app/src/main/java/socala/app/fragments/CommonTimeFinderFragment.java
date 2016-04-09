@@ -38,6 +38,8 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
     @Bind(R.id.endHour) TextView endHourTextView;
     @Bind(R.id.durationSpinner) Spinner durationSpinner;
 
+    private static final int COMMON_TIME_CALENDAR_ACTIVITY_INTENT = 1;
+
     private DateRangePickerDialogs dateRangePickerDialogs;
     private TimePickerDialog startHourPickerDialog;
     private TimePickerDialog endHourPickerDialog;
@@ -46,6 +48,7 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
     private Calendar startTimeOfDay;
     private Calendar endTimeOfDay;
     private List<String> selectedIds;
+    private OnCalendarChanged callback;
     private final AppContext appContext = AppContext.getInstance();
 
     public CommonTimeFinderFragment() {
@@ -81,6 +84,15 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
     }
 
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == COMMON_TIME_CALENDAR_ACTIVITY_INTENT && resultCode == getActivity().RESULT_OK) {
+            callback.onCalendarChanged();
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_common_time_finder, container, false);
@@ -90,6 +102,8 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
         selectedIds = new ArrayList<>();
         selectedIds.add(appContext.getUser().id);
         populateFields();
+
+        callback = (OnCalendarChanged) getActivity();
 
         return view;
     }
@@ -142,7 +156,7 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
         intent.putExtra("endTimeOfDay", endTimeOfDay);
         intent.putExtra("duration", durationSpinner.getSelectedItem().toString());
 
-        startActivity(intent);
+        startActivityForResult(intent, COMMON_TIME_CALENDAR_ACTIVITY_INTENT);
     }
 
     private String[] durationOptions() {
@@ -167,5 +181,9 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
         users.addAll(appContext.getCachedUsers());
 
         return users;
+    }
+
+    public interface OnCalendarChanged {
+        void onCalendarChanged();
     }
 }
