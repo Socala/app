@@ -1,24 +1,16 @@
 package socala.app.activities;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import org.parceler.Parcels;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import socala.app.R;
 import socala.app.contexts.AppContext;
+import socala.app.dialogs.DateRangePickerDialogs;
 import socala.app.models.Event;
 import socala.app.services.ISocalaService;
 import socala.app.services.SocalaClient;
@@ -49,25 +42,20 @@ public class EventDetailsActivity extends AppCompatActivity {
     private final ISocalaService service = SocalaClient.getClient();
     private Event event;
     private boolean editable;
-    private DatePickerDialog startDatePickerDialog;
-    private DatePickerDialog endDatePickerDialog;
-    private TimePickerDialog startTimePickerDialog;
-    private TimePickerDialog endTimePickerDialog;
-    private DateFormat dateFormatter;
-    private DateFormat timeFormatter;
+    private DateRangePickerDialogs dateRangePickerDialogs;
 
     @OnClick({R.id.startDate, R.id.endDate, R.id.endTime, R.id.startTime, R.id.saveButton})
     public void onDateTimeClick(TextView view) {
         int viewId = view.getId();
 
         if (viewId == R.id.startDate) {
-            startDatePickerDialog.show();
+            dateRangePickerDialogs.showStartDatePicker();
         } else if (viewId == R.id.endDate) {
-            endDatePickerDialog.show();
+            dateRangePickerDialogs.showEndDatePicker();
         } else if (viewId == R.id.endTime) {
-            endTimePickerDialog.show();
+            dateRangePickerDialogs.showEndTimePicker();
         } else if (viewId == R.id.startTime) {
-            startTimePickerDialog.show();
+            dateRangePickerDialogs.showStartTimePicker();
         } else if (viewId == R.id.saveButton) {
             save();
         }
@@ -110,66 +98,10 @@ public class EventDetailsActivity extends AppCompatActivity {
         summaryEditText.setText(event.title);
         rsvpableCheckBox.setChecked(event.rsvpable);
 
-        dateFormatter = SimpleDateFormat.getDateInstance();
-        timeFormatter = SimpleDateFormat.getTimeInstance();
-
-        String startDateStr = dateFormatter.format(event.start.getTime());
-        String endDateStr = dateFormatter.format(event.end.getTime());
-        String startTimeStr = timeFormatter.format(event.start.getTime());
-        String endTimeStr = timeFormatter.format(event.end.getTime());
-
-        startDateTextView.setText(startDateStr);
-        endDateTextView.setText(endDateStr);
-        startTimeTextView.setText(startTimeStr);
-        endTimeTextView.setText(endTimeStr);
-
-        // The Android API Sucks
-
-        startDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                event.start.set(year, monthOfYear, dayOfMonth);
-                startDateTextView.setText(dateFormatter.format(event.start.getTime()));
-            }
-        },
-                event.start.get(Calendar.YEAR),
-                event.start.get(Calendar.MONTH),
-                event.start.get(Calendar.DAY_OF_MONTH));
-
-        endDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                event.end.set(year, monthOfYear, dayOfMonth);
-                endDateTextView.setText(dateFormatter.format(event.end.getTime()));
-            }
-        },
-                event.end.get(Calendar.YEAR),
-                event.end.get(Calendar.MONTH),
-                event.end.get(Calendar.DAY_OF_MONTH));
-
-        startTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                event.start.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                event.start.set(Calendar.MINUTE, minute);
-                startTimeTextView.setText(timeFormatter.format(event.start.getTime()));
-            }
-        },
-                event.start.get(Calendar.HOUR_OF_DAY),
-                event.start.get(Calendar.MINUTE),
-                false);
-
-        endTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                event.end.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                event.end.set(Calendar.MINUTE, minute);
-                endTimeTextView.setText(timeFormatter.format(event.end.getTime()));
-            }
-        },
-                event.end.get(Calendar.HOUR_OF_DAY),
-                event.end.get(Calendar.MINUTE),
-                false);
+        dateRangePickerDialogs = new DateRangePickerDialogs(this,
+                event.start, event.end,
+                startTimeTextView, endTimeTextView,
+                startDateTextView, endDateTextView);
     }
 
     private void setEditability(boolean value) {
@@ -224,7 +156,7 @@ public class EventDetailsActivity extends AppCompatActivity {
         if (event.start.getTime().after(event.end.getTime())) {
             makeToast("Cannot have start date after end date!");
             return false;
-        } else if (event.title == "") {
+        } else if (event.title.equals("")) {
             makeToast("Cannot have empty event title");
             return false;
         }

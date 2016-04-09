@@ -28,6 +28,9 @@ public interface ISocalaService {
     @GET("user/")
     Call<User> getUser(@Header("Authorization") String token);
 
+    @GET("user/")
+    Call<User> getUser(@Header("Authorization") String token, @Query("email") String email);
+
     @PUT("user/{id}")
     Call<User> updateUser(@Header("Authorization") String token, @Path("id") String userId, @Body User user);
 

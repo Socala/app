@@ -4,6 +4,15 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:imeOptions="actionGo"
+        android:inputType="textEmailAddress"
+        android:id="@+id/calendar_edit_text"
+        />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -4,9 +4,5 @@
     android:layout_height="match_parent"
     tools:context="socala.app.fragments.CommonTimeFinderFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
-
+    <include layout="@layout/content_fragment_common_time_finder" />
 </FrameLayout>

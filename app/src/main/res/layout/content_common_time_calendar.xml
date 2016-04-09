@@ -12,4 +12,5 @@
     tools:context=".activities.CommonTimeCalendarActivity"
     tools:showIn="@layout/activity_common_time_calendar">
 
+
 </RelativeLayout>

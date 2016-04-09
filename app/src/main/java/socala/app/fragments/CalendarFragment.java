@@ -199,6 +199,7 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
     private List<User> calendarOptions() {
         List<User> users = new ArrayList<>();
         users.addAll(appContext.getUser().friends);
+        users.addAll(appContext.getCachedUsers());
         users.add(appContext.getUser());
 
         return users;

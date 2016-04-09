@@ -41,7 +41,9 @@ public class MockInterceptor implements Interceptor {
             }
         }
 
-        if (path.equals("user/")) {
+        if (path.equals("user/") && url.queryParameter("email") != null) {
+            responseString = gson.toJson(createFakeFriend());
+        } else if (path.equals("user/")) {
             responseString = gson.toJson(createFakeUser());
         } else if (path.equals("user/friend/remove/")) {
             responseString = gson.toJson(true);
