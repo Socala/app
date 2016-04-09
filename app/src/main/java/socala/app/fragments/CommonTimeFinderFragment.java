@@ -1,5 +1,6 @@
 package socala.app.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -9,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,6 +19,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import socala.app.R;
+import socala.app.activities.CommonTimeCalendarActivity;
 import socala.app.contexts.AppContext;
 import socala.app.dialogs.CalendarOptionsDialog;
 import socala.app.dialogs.DateRangePickerDialogs;
@@ -104,7 +105,19 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
     }
 
     private void computeCommonTimes() {
-        Toast.makeText(getContext(), "Works", Toast.LENGTH_SHORT).show();
+        // TODO: Validate before computing
+
+        Intent intent = new Intent(getActivity(), CommonTimeCalendarActivity.class);
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.addAll(selectedIds);
+
+        intent.putStringArrayListExtra("selectedIds", arrayList);
+        intent.putExtra("start", start);
+        intent.putExtra("end", end);
+        intent.putExtra("duration", durationSpinner.getSelectedItem().toString());
+
+        startActivity(intent);
     }
 
     private String[] durationOptions() {

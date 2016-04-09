@@ -11,8 +11,9 @@ import java.util.Calendar;
 
 public class SocalaDatePickerDialog extends DatePickerDialog {
 
-    public SocalaDatePickerDialog(Context context, final TextView textView, final Calendar calendar, final DateFormat formatter) {
+    public SocalaDatePickerDialog(Context context, final TextView textView, final Calendar calendar) {
         super(context, new OnDateSetListener() {
+            final DateFormat formatter = DateFormat.getDateInstance();
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 calendar.set(year, monthOfYear, dayOfMonth);
@@ -23,6 +24,7 @@ public class SocalaDatePickerDialog extends DatePickerDialog {
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH));
 
+        final DateFormat formatter = DateFormat.getDateInstance();
         textView.setText(formatter.format(calendar.getTime()));
     }
 }

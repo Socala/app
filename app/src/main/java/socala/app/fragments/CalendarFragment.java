@@ -36,7 +36,7 @@ import socala.app.models.Event;
 import socala.app.models.SocalaWeekViewEvent;
 import socala.app.models.User;
 
-public class CalendarFragment extends Fragment implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, CalendarOptionsDialog.CalendarsChangedListener {
+public class CalendarFragment extends Fragment implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, CalendarOptionsDialog.CalendarsChangedListener {
 
     protected static final int EVENT_DETAILS_INTENT = 1;
 
@@ -96,7 +96,6 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
 
         weekView.setOnEventClickListener(this);
         weekView.setMonthChangeListener(this);
-        weekView.setEventLongPressListener(this);
 
         setHasOptionsMenu(true);
 
@@ -122,11 +121,6 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
         return this.getEventsForMonth(newYear, newMonth);
-    }
-
-    @Override
-    public void onEventLongPress(WeekViewEvent event, RectF eventRect) {
-
     }
 
     public void refresh() {
@@ -165,8 +159,8 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         List<WeekViewEvent> filteredEvents = new ArrayList<>();
 
         for (Event e : events) {
-            if (startOfRange.getTime().before(e.start.getTime())
-                    && endOfRange.getTime().after(e.start.getTime())) {
+            if (startOfRange.before(e.start)
+                    && endOfRange.after(e.start)) {
                 filteredEvents.add(e.toWeekViewEvent());
 
             }

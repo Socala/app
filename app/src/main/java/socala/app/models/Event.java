@@ -11,7 +11,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @Parcel
-public class Event {
+public class Event implements Comparable {
     public String id;
     public PrivacyLevel privacyLevel;
     public boolean rsvpable;
@@ -59,5 +59,16 @@ public class Event {
         event.title = "New Event";
 
         return event;
+    }
+
+    @Override
+    public int compareTo(Object another) {
+        if (!(another instanceof Event)) {
+            return 1;
+        }
+
+        Event event = (Event) another;
+
+        return this.start.compareTo(event.start);
     }
 }

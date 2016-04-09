@@ -5,8 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DateRangePickerDialogs {
@@ -22,14 +20,11 @@ public class DateRangePickerDialogs {
                                   TextView startDateTextView,
                                   TextView endDateTextView) {
 
-        DateFormat dateFormatter = SimpleDateFormat.getDateInstance();
-        DateFormat timeFormatter = SimpleDateFormat.getTimeInstance();
+        startDatePickerDialog = new SocalaDatePickerDialog(context, startDateTextView, start);
+        endDatePickerDialog = new SocalaDatePickerDialog(context, endDateTextView, end);
 
-        startDatePickerDialog = new SocalaDatePickerDialog(context, startDateTextView, start, dateFormatter);
-        endDatePickerDialog = new SocalaDatePickerDialog(context, endDateTextView, end, dateFormatter);
-
-        startTimePickerDialog = new SocalaTimePickerDialog(context, startTimeTextView, start, timeFormatter);
-        endTimePickerDialog = new SocalaTimePickerDialog(context, endTimeTextView, end, timeFormatter);
+        startTimePickerDialog = new SocalaTimePickerDialog(context, startTimeTextView, start);
+        endTimePickerDialog = new SocalaTimePickerDialog(context, endTimeTextView, end);
     }
 
     public void showStartDatePicker() {

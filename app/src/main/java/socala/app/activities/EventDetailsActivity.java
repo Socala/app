@@ -153,7 +153,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     }
 
     private boolean validateFields() {
-        if (event.start.getTime().after(event.end.getTime())) {
+        if (event.start.after(event.end)) {
             makeToast("Cannot have start date after end date!");
             return false;
         } else if (event.title.equals("")) {
