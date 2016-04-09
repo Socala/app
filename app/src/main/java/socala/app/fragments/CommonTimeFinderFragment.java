@@ -1,5 +1,6 @@
 package socala.app.fragments;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -23,6 +24,7 @@ import socala.app.activities.CommonTimeCalendarActivity;
 import socala.app.contexts.AppContext;
 import socala.app.dialogs.CalendarOptionsDialog;
 import socala.app.dialogs.DateRangePickerDialogs;
+import socala.app.dialogs.SocalaTimePickerDialog;
 import socala.app.models.EventDuration;
 import socala.app.models.User;
 
@@ -32,11 +34,17 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
     @Bind(R.id.endDate) TextView endDateTextView;
     @Bind(R.id.startTime) TextView startTimeTextView;
     @Bind(R.id.endTime) TextView endTimeTextView;
+    @Bind(R.id.startHour) TextView startHourTextView;
+    @Bind(R.id.endHour) TextView endHourTextView;
     @Bind(R.id.durationSpinner) Spinner durationSpinner;
 
     private DateRangePickerDialogs dateRangePickerDialogs;
+    private TimePickerDialog startHourPickerDialog;
+    private TimePickerDialog endHourPickerDialog;
     private Calendar start;
     private Calendar end;
+    private Calendar startTimeOfDay;
+    private Calendar endTimeOfDay;
     private List<String> selectedIds;
     private final AppContext appContext = AppContext.getInstance();
 
@@ -49,7 +57,7 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
         return fragment;
     }
 
-    @OnClick({R.id.startDate, R.id.endDate, R.id.endTime, R.id.startTime, R.id.computeButton, R.id.selectButton})
+    @OnClick({R.id.startDate, R.id.endDate, R.id.endTime, R.id.startTime, R.id.computeButton, R.id.selectButton, R.id.startHour, R.id.endHour})
     public void onClick(View view) {
         int viewId = view.getId();
 
@@ -65,6 +73,10 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
             computeCommonTimes();
         } else if (viewId == R.id.selectButton) {
             createCalendarOptionsDialog();
+        } else if (viewId == R.id.startHour) {
+            startHourPickerDialog.show();
+        } else if (viewId == R.id.endHour) {
+            endHourPickerDialog.show();
         }
     }
 
@@ -93,10 +105,21 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
         end = Calendar.getInstance();
         end.add(Calendar.DATE, 5);
 
+        startTimeOfDay = Calendar.getInstance();
+        startTimeOfDay.set(Calendar.HOUR_OF_DAY, 8);
+        startTimeOfDay.set(Calendar.MINUTE, 0);
+
+        endTimeOfDay = Calendar.getInstance();
+        endTimeOfDay.set(Calendar.HOUR_OF_DAY, 17);
+        endTimeOfDay.set(Calendar.MINUTE, 0);
+
         dateRangePickerDialogs = new DateRangePickerDialogs(getContext(),
                 start, end,
                 startTimeTextView, endTimeTextView,
                 startDateTextView, endDateTextView);
+
+        startHourPickerDialog = new SocalaTimePickerDialog(getContext(), startHourTextView, startTimeOfDay);
+        endHourPickerDialog = new SocalaTimePickerDialog(getContext(), endHourTextView, endTimeOfDay);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
                 android.R.layout.simple_list_item_1, durationOptions());
@@ -105,7 +128,7 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
     }
 
     private void computeCommonTimes() {
-        // TODO: Validate before computing
+        // TODO: Validate fields before starting new activity
 
         Intent intent = new Intent(getActivity(), CommonTimeCalendarActivity.class);
 
@@ -115,6 +138,8 @@ public class CommonTimeFinderFragment extends Fragment implements CalendarOption
         intent.putStringArrayListExtra("selectedIds", arrayList);
         intent.putExtra("start", start);
         intent.putExtra("end", end);
+        intent.putExtra("startTimeOfDay", startTimeOfDay);
+        intent.putExtra("endTimeOfDay", endTimeOfDay);
         intent.putExtra("duration", durationSpinner.getSelectedItem().toString());
 
         startActivity(intent);

@@ -95,5 +95,23 @@
         android:layout_below="@+id/durationSpinner"
         android:layout_centerHorizontal="true"/>
 
+    <TextView
+        android:text="endHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/endHour"
+        android:layout_centerVertical="true"
+        android:layout_alignEnd="@+id/startHour"/>
+
+    <TextView
+        android:text="startHour"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/startHour"
+        android:layout_above="@+id/endHour"
+        android:layout_alignEnd="@+id/calendarsTextView"/>
+
 
 </RelativeLayout>
