@@ -221,7 +221,6 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
         Calendar startBlank = (Calendar) startOfMonth.clone();
         Calendar endBlank = Calendar.getInstance();
 
-
         boolean beforeMonth = false;
 
         // either start is before the start of the month or after
@@ -231,6 +230,12 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
             beforeMonth = true;
         } else {
             Calendar startClone = (Calendar) start.clone();
+
+            if (isBeforeTimeOfDay(startClone, startTimeOfDay)) {
+                startClone.set(Calendar.MINUTE, startTimeOfDay.get(Calendar.MINUTE));
+                startClone.set(Calendar.HOUR_OF_DAY, startTimeOfDay.get(Calendar.HOUR_OF_DAY));
+            }
+
             startClone.add(Calendar.MINUTE, -1);
             blankEvents.add(createBlankEvent((Calendar) startBlank.clone(), startClone));
         }
