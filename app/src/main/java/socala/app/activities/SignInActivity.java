@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
 
 import java.io.IOException;
 
@@ -68,6 +69,8 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestIdToken(SignInActivity.CLIENT_ID)
+                .requestServerAuthCode(SignInActivity.CLIENT_ID, true)
+                .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .build();
 
         // Create Client to authenticate
