@@ -56,9 +56,17 @@
         android:layout_height="wrap_content"
         android:text="Save"
         android:id="@+id/saveButton"
+        android:layout_marginBottom="48dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="50dp"/>
+        android:layout_toStartOf="@+id/endTime"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:id="@+id/deleteButton"
+        android:layout_alignTop="@+id/saveButton"
+        android:layout_toStartOf="@+id/saveButton"/>
 
     <EditText
         android:layout_width="wrap_content"
@@ -68,13 +76,12 @@
         android:layout_alignParentStart="true"
         android:layout_alignEnd="@+id/saveButton"/>
 
-    <CheckBox
+    <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rsvpable"
-        android:id="@+id/rsvpableCheckBox"
+        android:id="@+id/privacyLevelSpinner"
+        android:layout_below="@+id/endDate"
         android:layout_alignParentStart="true"
-        android:checked="false"
-        android:layout_below="@+id/endTime"/>
+        android:spinnerMode="dropdown"/>
 
 </RelativeLayout>

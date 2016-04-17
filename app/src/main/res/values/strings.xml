@@ -86,4 +86,7 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="options">Options</string>
     <string name="to_today">To Today</string>
+    <string name="week_view">Week View</string>
+    <string name="day_view">Day View</string>
+    <string name="_3_day_view">3-Day View</string>
 </resources>

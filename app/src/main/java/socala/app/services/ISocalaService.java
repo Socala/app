@@ -1,5 +1,6 @@
 package socala.app.services;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -7,11 +8,8 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import socala.app.models.SocalaCalendar;
-import socala.app.models.CommonTimeOptions;
 import socala.app.models.Event;
 import socala.app.models.User;
 
@@ -19,48 +17,30 @@ public interface ISocalaService {
 
 //    String ENDPOINT = "http://www.backend.com/";
 
-    @POST("user/")
-    Call<User> addUser(@Body User user);
+    @GET("users/signin")
+    Call<User> signIn(@Header("Authorization") String token);
 
-    @DELETE("user/{id}")
-    Call<Boolean> removeUser(@Header("Authorization") String token, @Path("id") String userId);
-
-    @GET("user/")
-    Call<User> getUser(@Header("Authorization") String token);
-
-    @GET("user/")
-    Call<User> getUser(@Header("Authorization") String token, @Query("email") String email);
-
-    @PUT("user/{id}")
-    Call<User> updateUser(@Header("Authorization") String token, @Path("id") String userId, @Body User user);
-
-    @POST("event/")
-    Call<Event> addEvent(@Header("Authorization") String token, @Body Event event);
-
-    @DELETE("event/{id}")
-    Call<Event> removeEvent(@Header("Authorization") String token, @Path("id") String eventId);
-
-    @PUT("event/{id}")
-    Call<Event> updateEvent(@Header("Authorization") String token, @Path("id") String eventId, @Body Event event);
-
-    @GET("event/{id}")
-    Call<SocalaCalendar> getCalendar(@Header("Authorization") String token, @Path("id") String userId);
+    @GET("users/")
+    Call<User> getUser(@Query("email") String email);
 
     @POST("events/")
-    Call<SocalaCalendar[]> getCalendars(@Header("Authorization") String token, @Body String[] userIds);
+    Call<Event> addEvent(@Body Event event);
 
-    @GET("user/{id}/rsvp/{eventId}")
-    Call<Boolean> rsvp(@Header("Authorization") String token, @Path("eventId") String eventId, @Path("id") String eventUserId);
+    @DELETE("events/{id}")
+    Call<Boolean> removeEvent(@Path("id") String eventId);
 
-    @GET("user/{id}/unrsvp/{eventId}")
-    Call<Boolean> unrsvp(@Header("Authorization") String token, @Path("eventId") String eventId, @Path("id") String eventUserId);
+    @PUT("events/")
+    Call<Boolean> updateEvent(@Body Event event);
 
-    @GET("events/commonTimes")
-    Call<SocalaCalendar> getCommonTimes(@Header("Authorization") String token, @Part("userId") String userId, @Part("friendIds") String[] friendIds, @Part("options") CommonTimeOptions options);
+    @GET("users/{id}/rsvp/{eventId}")
+    Call<Boolean> rsvp(@Path("eventId") String eventId, @Path("id") String eventUserId);
 
-    @GET("user/friend/add")
-    Call<User> addFriend(@Header("Authorizaiton") String token, @Query("email") String email);
+    @GET("users/{id}/unrsvp/{eventId}")
+    Call<Boolean> unrsvp(@Path("eventId") String eventId, @Path("id") String eventUserId);
 
-    @GET("user/friend/remove")
-    Call<Boolean> removeFriend(@Header("Authorization") String token, @Query("email") String friendId);
+    @GET("users/friends/add")
+    Call<User> addFriend(@Query("email") String email);
+
+    @GET("users/friends/remove")
+    Call<Boolean> removeFriend(@Query("email") String friendId);
 }

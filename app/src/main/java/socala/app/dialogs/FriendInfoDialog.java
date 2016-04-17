@@ -13,9 +13,8 @@ public class FriendInfoDialog extends DialogFragment {
     private FriendInfoDialogListener callback;
     private String displayName;
     private String email;
-    private String id;
 
-    public static FriendInfoDialog newInstance(String displayName, String email, String id) {
+    public static FriendInfoDialog newInstance(String displayName, String email) {
 
         FriendInfoDialog dialog = new FriendInfoDialog();
 
@@ -23,7 +22,6 @@ public class FriendInfoDialog extends DialogFragment {
 
         args.putString("displayName", displayName);
         args.putString("email", email);
-        args.putString("id", id);
 
         dialog.setArguments(args);
 
@@ -43,7 +41,7 @@ public class FriendInfoDialog extends DialogFragment {
                 .setPositiveButton("Remove Friend", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        callback.onRemoveFriendClicked(id);
+                        callback.onRemoveFriendClicked(email);
                     }
                 })
                 .setNegativeButton("Exit", new DialogInterface.OnClickListener() {
@@ -61,7 +59,6 @@ public class FriendInfoDialog extends DialogFragment {
 
         displayName = getArguments().getString("displayName");
         email = getArguments().getString("email");
-        id = getArguments().getString("id");
 
         try {
             callback = (FriendInfoDialogListener) getTargetFragment();

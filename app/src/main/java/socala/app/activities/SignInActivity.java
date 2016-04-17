@@ -18,8 +18,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 
-import java.io.IOException;
-
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import socala.app.R;
 import socala.app.contexts.AppContext;
@@ -31,7 +31,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     private static final int RC_SIGN_IN = 9001;
     private static final String CLIENT_ID = "254021896940-jc5hg452sa8j7uacr5q82hu2b7lg8fup.apps.googleusercontent.com";
-    private final ISocalaService service = SocalaClient.getClient();
+    private ISocalaService service;
     private final AppContext appContext = AppContext.getInstance();
     private GoogleApiClient googleApiClient;
 
@@ -65,6 +65,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
         setContentView(R.layout.activity_signin);
 
+        SocalaClient.setContext(getApplicationContext());
+
+        service = SocalaClient.getClient();
+
         // TODO: Move server client id to a constants file that isn't checked in
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -78,6 +82,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
 
         // Set on click listener for sign in button
         findViewById(R.id.sign_in_button).setOnClickListener(this);
@@ -100,18 +105,29 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
         GoogleSignInAccount acct = result.getSignInAccount();
 
-        try {
-            Response<User> response = service.getUser(acct.getIdToken()).execute();
-            appContext.setUser(response.body());
+            service.signIn("Bearer " + acct.getServerAuthCode()).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
 
-            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    if (!response.isSuccessful()) {
+                        Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-            startActivity(intent);
-            finish();
+                    appContext.setUser(response.body());
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
-        } catch (IOException e) {
-            // TODO: Handle failure
-            e.printStackTrace();
-        }
+                    Auth.GoogleSignInApi.signOut(googleApiClient);
+
+                    startActivity(intent);
+                    finish();
+               }
+
+               @Override
+               public void onFailure(Call<User> call, Throwable t) {
+                   Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
+
+               }
+           });
     }
 }

@@ -6,28 +6,19 @@ import com.alamkanak.weekview.WeekViewEvent;
 
 import org.parceler.Parcel;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 @Parcel
 public class Event implements Comparable {
     public String id;
     public PrivacyLevel privacyLevel;
-    public boolean rsvpable;
     public String title;
-    public List<String> attendees;
     public Calendar start;
     public Calendar end;
-    public ArrayList recurrence;
-    public String recurringEventId;
     public String location;
     public String color;
 
-    public Event() {
-        this.recurrence = new ArrayList<>();
-        this.attendees = new ArrayList<>();
-    }
+    public Event() { }
 
     public WeekViewEvent toWeekViewEvent() {
 
@@ -49,8 +40,7 @@ public class Event implements Comparable {
 
         Calendar calendar = Calendar.getInstance();
 
-        event.rsvpable = false;
-        event.privacyLevel = PrivacyLevel.FRIEND;
+        event.privacyLevel = PrivacyLevel.FRIENDS;
         event.color = "#111111";
         event.start = (Calendar) calendar.clone();
         calendar.add(Calendar.HOUR, 1);

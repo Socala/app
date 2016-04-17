@@ -68,6 +68,12 @@ public class CalendarFragment extends Fragment implements WeekView.EventClickLis
         } else if (item.getItemId() == R.id.to_today) {
             weekView.goToToday();
             return true;
+        } else if (item.getItemId() == R.id.week_view) {
+            weekView.setNumberOfVisibleDays(7);
+        } else if (item.getItemId() == R.id.three_day_view) {
+            weekView.setNumberOfVisibleDays(3);
+        } else if (item.getItemId() == R.id.day_view) {
+            weekView.setNumberOfVisibleDays(1);
         }
 
         return super.onOptionsItemSelected(item);

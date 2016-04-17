@@ -3,9 +3,6 @@
     tools:context="socala.app.CalendarActivity">
     <group>
         <item
-            android:id="@+id/calendar_options"
-            android:title="@string/options" />
-        <item
             android:id="@+id/to_today"
             android:title="@string/to_today" />
         <item

@@ -5,7 +5,6 @@ import org.parceler.Parcel;
 @Parcel
 public enum PrivacyLevel {
     HIDDEN,
-    PARTIAL,
-    FRIEND,
-    LOCATION
+    PUBLIC,
+    FRIENDS
 }

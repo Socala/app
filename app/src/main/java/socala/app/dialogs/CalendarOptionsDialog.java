@@ -104,7 +104,7 @@ public class CalendarOptionsDialog extends DialogFragment {
             return;
         }
 
-        service.getUser(appContext.getUser().oauthToken, calendarEditText.getText().toString()).enqueue(new Callback<User>() {
+        service.getUser(calendarEditText.getText().toString()).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 User u = response.body();

@@ -46,4 +46,17 @@ public class SocalaCalendar {
 
         events.add(e);
     }
+
+    public void removeEvent(String id) {
+        int index = -1;
+        for (int i = 0; i < events.size(); i++) {
+            if (events.get(i).id.equals(id)) {
+                index = i;
+            }
+        }
+
+        if (index != -1) {
+            events.remove(index);
+        }
+    }
 }

@@ -5,9 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,8 +18,8 @@ import java.util.Calendar;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import butterknife.OnItemSelected;
 import butterknife.OnTextChanged;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,6 +28,7 @@ import socala.app.R;
 import socala.app.contexts.AppContext;
 import socala.app.dialogs.DateRangePickerDialogs;
 import socala.app.models.Event;
+import socala.app.models.PrivacyLevel;
 import socala.app.services.ISocalaService;
 import socala.app.services.SocalaClient;
 
@@ -34,12 +36,13 @@ public class EventDetailsActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.summary) EditText summaryEditText;
-    @Bind(R.id.rsvpableCheckBox) CheckBox rsvpableCheckBox;
     @Bind(R.id.startDate) TextView startDateTextView;
     @Bind(R.id.endDate) TextView endDateTextView;
     @Bind(R.id.startTime) TextView startTimeTextView;
     @Bind(R.id.endTime) TextView endTimeTextView;
     @Bind(R.id.saveButton) Button saveButton;
+    @Bind(R.id.deleteButton) Button deleteButton;
+    @Bind(R.id.privacyLevelSpinner) Spinner privacyLevelSpinner;
 
     private final AppContext appContext = AppContext.getInstance();
     private final ISocalaService service = SocalaClient.getClient();
@@ -47,7 +50,7 @@ public class EventDetailsActivity extends AppCompatActivity {
     private boolean editable;
     private DateRangePickerDialogs dateRangePickerDialogs;
 
-    @OnClick({R.id.startDate, R.id.endDate, R.id.endTime, R.id.startTime, R.id.saveButton})
+    @OnClick({R.id.startDate, R.id.endDate, R.id.endTime, R.id.startTime, R.id.saveButton, R.id.deleteButton })
     public void onDateTimeClick(TextView view) {
         int viewId = view.getId();
 
@@ -61,12 +64,14 @@ public class EventDetailsActivity extends AppCompatActivity {
             dateRangePickerDialogs.showStartTimePicker();
         } else if (viewId == R.id.saveButton) {
             save();
+        } else if (viewId == R.id.deleteButton) {
+            delete();
         }
     }
 
-    @OnCheckedChanged(R.id.rsvpableCheckBox)
-    public void OnRsvpableClick(CheckBox view, boolean isChecked) {
-        event.rsvpable = isChecked;
+    @OnItemSelected(R.id.privacyLevelSpinner)
+    public void OnPrivacyLevelSelected() {
+        event.privacyLevel = (PrivacyLevel) privacyLevelSpinner.getSelectedItem();
     }
 
     @OnTextChanged(R.id.summary)
@@ -92,6 +97,7 @@ public class EventDetailsActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+
         setResult(RESULT_CANCELED);
 
         event = Parcels.unwrap(getIntent().getParcelableExtra("event"));
@@ -107,9 +113,18 @@ public class EventDetailsActivity extends AppCompatActivity {
                 event.end = endTime;
             }
 
+            deleteButton.setVisibility(View.INVISIBLE);
             setEditability(true);
         } else {
-            setEditability(appContext.getUser().calendar.hasEvent(event.id));
+
+            boolean isUsersEvent = appContext.getUser().calendar.hasEvent(event.id);
+
+            setEditability(isUsersEvent);
+
+            if (!isUsersEvent) {
+                deleteButton.setVisibility(View.INVISIBLE);
+                saveButton.setVisibility(View.INVISIBLE);
+            }
         }
 
         this.populateFields();
@@ -121,7 +136,11 @@ public class EventDetailsActivity extends AppCompatActivity {
     private void populateFields() {
 
         summaryEditText.setText(event.title);
-        rsvpableCheckBox.setChecked(event.rsvpable);
+
+        ArrayAdapter<PrivacyLevel> privacyLevelAdapter = new ArrayAdapter<PrivacyLevel>(this, android.R.layout.simple_list_item_1, PrivacyLevel.values());
+        privacyLevelSpinner.setAdapter(privacyLevelAdapter);
+
+        privacyLevelSpinner.setSelection(privacyLevelAdapter.getPosition(event.privacyLevel));
 
         dateRangePickerDialogs = new DateRangePickerDialogs(this,
                 event.start, event.end,
@@ -133,7 +152,8 @@ public class EventDetailsActivity extends AppCompatActivity {
         editable = value;
         setEditability(summaryEditText, value);
         setEditability(saveButton, value);
-        setEditability(rsvpableCheckBox, value);
+        setEditability(deleteButton, value);
+        setEditability(privacyLevelSpinner, value);
         setEditability(startDateTextView, value);
         setEditability(endDateTextView, value);
         setEditability(startTimeTextView, value);
@@ -147,33 +167,89 @@ public class EventDetailsActivity extends AppCompatActivity {
         v.setClickable(value);
     }
 
-    private void save() {
-        if(!validateFields() || !editable) {
+
+    private void delete() {
+        if (!editable) {
             return;
         }
 
-        Call<Event> call;
+        Call<Boolean> call = service.removeEvent(event.id);
 
-        if (event.id.equals("")) {
-            call = service.addEvent(appContext.getUser().oauthToken, event);
-        } else {
-            call = service.updateEvent(appContext.getUser().oauthToken, event.id, event);
-        }
-
-        call.enqueue(new Callback<Event>() {
+        call.enqueue(new Callback<Boolean>() {
             @Override
-            public void onResponse(Call<Event> call, Response<Event> response) {
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+                if (!response.isSuccessful() || !response.body()) {
+                    makeToast("Failed to remove event!");
+                    return;
+                }
 
-                Event e = response.body();
+                appContext.getUser().calendar.removeEvent(event.id);
 
-                appContext.getUser().calendar.upsertEvent(e);
                 setResult(RESULT_OK);
                 finish();
             }
 
             @Override
-            public void onFailure(Call<Event> call, Throwable t) {
-                makeToast("Failed to save event!");
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                makeToast("Failed to remove event!");
+            }
+        });
+
+
+    }
+
+    private void save() {
+        if(!validateFields() || !editable) {
+            return;
+        }
+
+        if (event.id.equals("")) {
+            Call<Event> call = service.addEvent(event);
+
+            call.enqueue(new Callback<Event>() {
+                @Override
+                public void onResponse(Call<Event> call, Response<Event> response) {
+
+                    if (!response.isSuccessful()) {
+                        makeToast("Failed to create event!");
+                        return;
+                    }
+
+                    Event e = response.body();
+
+                    appContext.getUser().calendar.upsertEvent(e);
+                    setResult(RESULT_OK);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(Call<Event> call, Throwable t) {
+                    makeToast("Failed to create event!");
+                }
+            });
+
+            return;
+        }
+
+        Call<Boolean> call = service.updateEvent(event);
+
+        call.enqueue(new Callback<Boolean>() {
+            @Override
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+
+                if (!response.isSuccessful()) {
+                    makeToast("Failed to update event!");
+                    return;
+                }
+
+                appContext.getUser().calendar.upsertEvent(event);
+                setResult(RESULT_OK);
+                finish();
+            }
+
+            @Override
+            public void onFailure(Call<Boolean> call, Throwable t) {
+                makeToast("Failed to update event!");
             }
         });
     }

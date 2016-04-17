@@ -173,5 +173,4 @@ public class MainActivity extends AppCompatActivity implements CommonTimeFinderF
     private ActionBarDrawerToggle setupDrawerToggle() {
         return new ActionBarDrawerToggle(this, drawer, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
-
 }

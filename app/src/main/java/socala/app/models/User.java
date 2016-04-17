@@ -11,7 +11,6 @@ import java.util.List;
 public class User {
     public String id;
     public String displayName;
-    public String oauthToken;
     public String email;
     public SocalaCalendar calendar;
     public List<User> friends;
@@ -20,14 +19,14 @@ public class User {
         friends = new ArrayList<>();
     }
 
-    public User getFriend(String id) {
+    public User getFriend(String email) {
         for (User friend : friends) {
-            if (friend.id.equals(id)) {
+            if (friend.email.equals(email)) {
                 return friend;
             }
         }
 
-        throw new Resources.NotFoundException("Could not find friend with " + id + " in user");
+        throw new Resources.NotFoundException("Could not find friend with " + email + " in user");
     }
 
 }

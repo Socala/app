@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.alamkanak.weekview.MonthLoader;
@@ -51,11 +53,26 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.common_time_calendar_options, menu);
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (item.getItemId() == R.id.to_today) {
+            weekView.goToToday();
+            return true;
+        } else if (item.getItemId() == R.id.week_view) {
+            weekView.setNumberOfVisibleDays(7);
+        } else if (item.getItemId() == R.id.three_day_view) {
+            weekView.setNumberOfVisibleDays(3);
+        } else if (item.getItemId() == R.id.day_view) {
+            weekView.setNumberOfVisibleDays(1);
         }
 
         return super.onOptionsItemSelected(item);
@@ -157,6 +174,7 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
         List<WeekViewEvent> blankEvents = new ArrayList<>();
 
         if (events.size() == 0) {
+            blankEvents.addAll(generateFillerBlankEvents(newYear, newMonth));
             return blankEvents;
         }
 
@@ -234,6 +252,9 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
             if (isBeforeTimeOfDay(startClone, startTimeOfDay)) {
                 startClone.set(Calendar.MINUTE, startTimeOfDay.get(Calendar.MINUTE));
                 startClone.set(Calendar.HOUR_OF_DAY, startTimeOfDay.get(Calendar.HOUR_OF_DAY));
+            } else if (isAfterTimeOfDay(startClone, endTimeOfDay)) {
+                startClone.set(Calendar.MINUTE, endTimeOfDay.get(Calendar.MINUTE));
+                startClone.set(Calendar.HOUR_OF_DAY, endTimeOfDay.get(Calendar.HOUR_OF_DAY));
             }
 
             startClone.add(Calendar.MINUTE, -1);
@@ -241,7 +262,7 @@ public class CommonTimeCalendarActivity extends AppCompatActivity implements Wee
         }
 
         // start was before month or end time of day is before the start
-        if (beforeMonth || isBeforeTimeOfDay(endTimeOfDay, start)) {
+        if (beforeMonth) {
             startBlank.set(year, month, 1, endTimeOfDay.get(Calendar.HOUR_OF_DAY), endTimeOfDay.get(Calendar.MINUTE), 0);
             endBlank.set(year, month, 2, startTimeOfDay.get(Calendar.HOUR_OF_DAY), startTimeOfDay.get(Calendar.MINUTE), 0);
         } else {

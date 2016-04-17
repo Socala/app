@@ -78,8 +78,8 @@ public class FriendListFragment extends Fragment implements
     }
 
     @Override
-    public void onRemoveFriendClicked(String id) {
-        removeFriend(id);
+    public void onRemoveFriendClicked(String email) {
+        removeFriend(email);
     }
 
     @Override
@@ -99,17 +99,22 @@ public class FriendListFragment extends Fragment implements
     }
 
     private void showFriendDetailsDialog(User user) {
-        DialogFragment dialog = FriendInfoDialog.newInstance(user.displayName, user.email, user.id);
+        DialogFragment dialog = FriendInfoDialog.newInstance(user.displayName, user.email);
         dialog.setTargetFragment(this, 0);
         dialog.show(getFragmentManager(), "FriendInfoDialog");
     }
 
     private void addFriend(final String email) {
 
-        service.addFriend(appContext.getUser().oauthToken, email).enqueue(new Callback<User>() {
+        service.addFriend(email).enqueue(new Callback<User>() {
 
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+
+                if (!response.isSuccessful()) {
+                    showFailedToAddToast(email);
+                    return;
+                }
 
                 appContext.getUser().friends.add(response.body());
                 adapter.notifyDataSetChanged();
@@ -123,20 +128,24 @@ public class FriendListFragment extends Fragment implements
 
     }
 
-    private void removeFriend(final String id) {
+    private void removeFriend(final String email) {
 
-        service.removeFriend(appContext.getUser().oauthToken, id).enqueue(new Callback<Boolean>() {
+        service.removeFriend(email).enqueue(new Callback<Boolean>() {
 
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
 
-
-                if (!response.body()) {
-                    showFailedToRemoveToast(id);
+                if (!response.isSuccessful()) {
+                    showFailedToRemoveToast(email);
                     return;
                 }
 
-                User friend = appContext.getUser().getFriend(id);
+                if (!response.body()) {
+                    showFailedToRemoveToast(email);
+                    return;
+                }
+
+                User friend = appContext.getUser().getFriend(email);
 
                 appContext.getUser().friends.remove(friend);
                 adapter.notifyDataSetChanged();
@@ -145,7 +154,7 @@ public class FriendListFragment extends Fragment implements
 
             @Override
             public void onFailure(Call<Boolean> call, Throwable t) {
-                showFailedToRemoveToast(id);
+                showFailedToRemoveToast(email);
             }
         });
     }
