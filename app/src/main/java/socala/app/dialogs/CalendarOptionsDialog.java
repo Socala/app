@@ -107,6 +107,12 @@ public class CalendarOptionsDialog extends DialogFragment {
         service.getUser(calendarEditText.getText().toString()).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
+
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Could not find user", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 User u = response.body();
 
                 appContext.getCachedUsers().add(u);

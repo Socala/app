@@ -8,6 +8,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -18,6 +20,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,8 +35,12 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
     private static final int RC_SIGN_IN = 9001;
     private static final String CLIENT_ID = "254021896940-jc5hg452sa8j7uacr5q82hu2b7lg8fup.apps.googleusercontent.com";
-    private ISocalaService service;
     private final AppContext appContext = AppContext.getInstance();
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.logo)
+    ImageView logo;
+    private ISocalaService service;
     private GoogleApiClient googleApiClient;
 
     @Override
@@ -64,6 +72,10 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_signin);
+        ButterKnife.bind(this);
+
+        showProgressBar(false);
+
 
         SocalaClient.setContext(getApplicationContext());
 
@@ -88,6 +100,18 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         findViewById(R.id.sign_in_button).setOnClickListener(this);
     }
 
+    private void showProgressBar(boolean visible) {
+        if (visible) {
+            progressBar.setVisibility(View.VISIBLE);
+            logo.setVisibility(View.GONE);
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+            logo.setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+        }
+    }
+
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -105,29 +129,33 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
         GoogleSignInAccount acct = result.getSignInAccount();
 
-            service.signIn("Bearer " + acct.getServerAuthCode()).enqueue(new Callback<User>() {
-                @Override
-                public void onResponse(Call<User> call, Response<User> response) {
+        showProgressBar(true);
 
-                    if (!response.isSuccessful()) {
-                        Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+        service.signIn("Bearer " + acct.getServerAuthCode()).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
 
-                    appContext.setUser(response.body());
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                if (!response.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
+                    showProgressBar(false);
+                    return;
+                }
 
-                    Auth.GoogleSignInApi.signOut(googleApiClient);
+                appContext.setUser(response.body());
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 
-                    startActivity(intent);
-                    finish();
-               }
+                Auth.GoogleSignInApi.signOut(googleApiClient);
 
-               @Override
-               public void onFailure(Call<User> call, Throwable t) {
-                   Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+                finish();
+            }
 
-               }
-           });
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                showProgressBar(false);
+                Toast.makeText(getApplicationContext(), "Failed to sign in", Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
 }

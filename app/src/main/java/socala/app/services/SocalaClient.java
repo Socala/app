@@ -19,7 +19,7 @@ import socala.app.serializers.CalendarSerializer;
 
 public class SocalaClient {
 
-    private static String ENDPOINT = "http://10.121.62.71:8080";
+    private static String ENDPOINT = "http://130.160.152.68:8080";
 
     private static ISocalaService dataService = null;
     private static Context context = null;
